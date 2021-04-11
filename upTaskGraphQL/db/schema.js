@@ -50,7 +50,7 @@ input ProyectoInput {
 
 input TareaInput {
     nombre: String!
-    proyecto: String!
+    proyecto: String
 }
 
 type Mutation {

@@ -10,6 +10,8 @@ const Stack = createStackNavigator();
 import Login from "./views/Login";
 import CrearCuenta from "./views/CrearCuenta";
 import Proyectos from './views/Proyectos';
+import NuevoProyecto from './views/NuevoProyecto';
+import Proyecto from './views/Proyecto';
 
 export default function App() {
   return (
@@ -57,8 +59,40 @@ export default function App() {
                 }
               }}
             ></Stack.Screen>
+
+            <Stack.Screen
+              name="NuevoProyecto"
+              component={NuevoProyecto}
+              options={{
+                title: "Nuevo Proyecto",
+                headerStyle: {
+                  backgroundColor: '#28303B'
+                },
+                headerTintColor: '#fff',
+                headerTitleStyle: {
+                  fontWeight: 'bold'
+                }
+              }}
+            />
+
+            <Stack.Screen
+              name="Proyecto"
+              component={Proyecto}
+              options={({ route }) => ({
+                title: route.params.nombre,    // ! De esta forma tenemos titulos dinamicos que vienen de la Base de Datos
+                headerStyle: {
+                  backgroundColor: "#28303B"
+                },
+                headerTintColor: "#fff",
+                headerTitleStyle: {
+                  fontWeight: "bold"
+                }
+              })}
+            ></Stack.Screen>
+
           </Stack.Navigator>
         </NavigationContainer>
+
       </Root>
     </>
   );

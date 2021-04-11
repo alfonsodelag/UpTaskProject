@@ -11,8 +11,8 @@ require("dotenv").config({ path: "variables.env" })
 // Crea y firma un JWT
 const crearToken = (usuario, secreta, expiresIn) => {
     console.log(usuario);
-    const { id, email } = usuario;
-    return jwt.sign({ id, email }, secreta, { expiresIn });
+    const { id, email, nombre } = usuario;
+    return jwt.sign({ id, email, nombre }, secreta, { expiresIn });
 }
 
 // Esta es nuestra base de datos de Momento
@@ -41,10 +41,9 @@ const resolvers = {
             }
 
             try {
-
                 // Hashear password
-                const salt = await bcryptjs.genSalt(10);
-                input.password = await bcryptjs.hash(password, salt);
+                const salt = await bcrypt.genSalt(10);
+                input.password = await bcrypt.hash(password, salt);
 
                 // Registrar nuevo usuario
                 const nuevoUsuario = new Usuario(input);
@@ -77,7 +76,7 @@ const resolvers = {
             }
             // Dar acceso a la app
             return {
-                token: crearToken(existeUsuario, process.env.SECRETA, "2hr")
+                token: crearToken(existeUsuario, process.env.SECRETA, "4hr")
             }
         },
         nuevoProyecto: async (_, { input }, ctx) => {
