@@ -9,6 +9,7 @@ const Stack = createStackNavigator();
 
 import Login from "./views/Login";
 import CrearCuenta from "./views/CrearCuenta";
+import Proyectos from './views/Proyectos';
 
 export default function App() {
   return (
@@ -16,6 +17,7 @@ export default function App() {
       <Root>
         <NavigationContainer>
           <Stack.Navigator initialRouteName="Login">
+
             <Stack.Screen
               name="Login"
               component={Login}
@@ -25,6 +27,7 @@ export default function App() {
               }}
             >
             </Stack.Screen>
+
             <Stack.Screen
               name="CrearCuenta"
               component={CrearCuenta}
@@ -38,8 +41,22 @@ export default function App() {
                   fontWeight: "bold"
                 }
               }}
-            >
-            </Stack.Screen>
+            ></Stack.Screen>
+
+            <Stack.Screen
+              name="Proyectos"
+              component={Proyectos}
+              options={{
+                title: "Proyectos",
+                headerStyle: {
+                  backgroundColor: "#28303B"
+                },
+                headerTintColor: "#fff",
+                headerTitleStyle: {
+                  fontWeight: "bold"
+                }
+              }}
+            ></Stack.Screen>
           </Stack.Navigator>
         </NavigationContainer>
       </Root>

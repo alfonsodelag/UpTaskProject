@@ -13,7 +13,6 @@ const NUEVA_CUENTA = gql`
     }
 `;
 
-
 const CrearCuenta = () => {
     // State del formulario
     const [nombre, guardarNombre] = useState('');
@@ -55,7 +54,6 @@ const CrearCuenta = () => {
                     }
                 }
             });
-
             guardarMensaje(data.crearUsuario);
             navigation.navigate('Login');
 

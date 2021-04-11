@@ -1,28 +1,97 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { View } from 'react-native'
-import { Container, Button, Text, Input, Form, Item, Toast, H1 } from "native-base"
-import globalStyles from '../styles/global'
-import { useNavigation } from "@react-navigation/native"
+import { Container, Button, Text, H1, Input, Form, Item, Toast } from 'native-base'
+import { useNavigation } from '@react-navigation/native'
+import globalStyles from '../styles/global';
+import AsyncStorage from '@react-native-community/async-storage';
 
-export default function Login() {
+// Apollo 
+import { gql, useMutation } from '@apollo/client';
 
-    // React Navigation
+const AUTENTICAR_USUARIO = gql`
+    mutation autenticarUsuario($input: AutenticarInput) {
+        autenticarUsuario(input: $input ) {
+        token
+        }
+    }
+`;
+
+const Login = () => {
+
+    // State del formulario
+    const [email, guardarEmail] = useState('');
+    const [password, guardarPassword] = useState('');
+
+    const [mensaje, guardarMensaje] = useState(null);
+
+    // React navigation
     const navigation = useNavigation();
 
+    // Mutation de apollo
+    const [autenticarUsuario] = useMutation(AUTENTICAR_USUARIO);
+
+    // Cuando el usuario presiona en iniciar sesion
+    const handleSubmit = async () => {
+        // validar
+        if (email === '' || password === '') {
+            // Mostrar un error
+            guardarMensaje('Todos los campos son obligatorios');
+            return;
+        }
+
+        try {
+            // autenticar el usuario
+            const { data } = await autenticarUsuario({
+                variables: {
+                    input: {
+                        email,
+                        password
+                    }
+                }
+            });
+
+            const { token } = data.autenticarUsuario;
+
+            // Colocar token en storage
+            await AsyncStorage.setItem('token', token);
+
+            // Redireccionar a Proyectos
+            navigation.navigate("Proyectos");
+        } catch (error) {
+            // si hay un error mostrarlo
+            guardarMensaje(error.message.replace('GraphQL error: ', ''));
+
+        }
+    }
+
+    // muestra un mensaje toast
+    const mostrarAlerta = () => {
+        Toast.show({
+            text: mensaje,
+            buttonText: 'OK',
+            duration: 5000
+        })
+    }
+
     return (
-        <Container style={[globalStyles.contenedor, { backgroundColor: "#E84347" }]}>
-            <View style={globalStyles.contenido} >
-                <H1 style={globalStyles.titulo}>Uptask</H1>
+        <Container style={[globalStyles.contenedor, { backgroundColor: '#e84347' }]}>
+            <View style={globalStyles.contenido}>
+                <H1 style={globalStyles.titulo}>UpTask</H1>
+
                 <Form>
-                    <Item inlineLabel last style={globalStyles.input}>
+                    <Item inlineLabel last style={globalStyles.input} >
                         <Input
+                            autoCompleteType="email"
                             placeholder="Email"
+                            onChangeText={texto => guardarEmail(texto.toLowerCase())}
+                            value={email}
                         />
                     </Item>
-                    <Item inlineLabel last style={globalStyles.input}>
+                    <Item inlineLabel last style={globalStyles.input} >
                         <Input
                             secureTextEntry={true}
                             placeholder="Password"
+                            onChangeText={texto => guardarPassword(texto)}
                         />
                     </Item>
                 </Form>
@@ -31,15 +100,22 @@ export default function Login() {
                     square
                     block
                     style={globalStyles.boton}
+                    onPress={() => handleSubmit()}
                 >
-                    <Text style={globalStyles.botonTexto}>Iniciar Sesión</Text>
+                    <Text
+                        style={globalStyles.botonTexto}
+                    >Iniciar Sesión</Text>
                 </Button>
 
                 <Text
                     onPress={() => navigation.navigate("CrearCuenta")}
                     style={globalStyles.enlace}
                 >Crear Cuenta</Text>
+
+                {mensaje && mostrarAlerta()}
             </View>
         </Container>
-    )
+    );
 }
+
+export default Login;
